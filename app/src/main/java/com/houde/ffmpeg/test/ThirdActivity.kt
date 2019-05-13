@@ -1,12 +1,16 @@
 package com.houde.ffmpeg.test
 
+import android.media.AudioFormat
+import android.media.AudioManager
+import android.media.AudioTrack
 import android.os.Bundle
 import android.support.v7.app.AppCompatActivity
 import android.view.View
 import kotlinx.android.synthetic.main.activity_third.*
 
 open class ThirdActivity : AppCompatActivity() {
-    private val inputFilePath = "/storage/emulated/0/GreenCheng/video/123.mp4"
+    private val inputFilePath = "/storage/emulated/0/GreenCheng/video/g4.mp4"
+    private var audioTrack:AudioTrack? = null
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_third)
@@ -14,5 +18,39 @@ open class ThirdActivity : AppCompatActivity() {
 
     fun play(view: View) {
         surface_view.startPlay(inputFilePath)
+    }
+
+    fun playAudio(view: View){
+//        Thread(Runnable {
+//            Log.d("ThirdActivity", "------>>调用native方法")
+//            playAudio(inputFilePath)
+//        }).start()
+        val player = MusicPlayer(inputFilePath)
+        player.playAudio()
+    }
+
+    open fun createTrack(sampleRateInHn:Int,nbChannel:Int){
+        val channelConfig =when (nbChannel) {
+            1 ->  AudioFormat.CHANNEL_OUT_MONO
+            2 -> AudioFormat.CHANNEL_OUT_STEREO
+            else -> AudioFormat.CHANNEL_OUT_MONO
+        }
+        val bufferSize = AudioTrack.getMinBufferSize(sampleRateInHn,channelConfig,AudioFormat.ENCODING_PCM_16BIT)
+        audioTrack = AudioTrack(AudioManager.STREAM_MUSIC,sampleRateInHn,channelConfig,AudioFormat.ENCODING_PCM_16BIT,bufferSize,AudioTrack.MODE_STREAM)
+        audioTrack?.play()
+    }
+
+    open fun playTrack(buffer:ByteArray,length:Int){
+        if(audioTrack != null && audioTrack?.playState == AudioTrack.PLAYSTATE_PLAYING){
+            audioTrack?.write(buffer,0,length)
+        }
+    }
+
+    private external fun playAudio(path:String)
+
+    companion object {
+        init {
+            System.loadLibrary("native-lib")
+        }
     }
 }
