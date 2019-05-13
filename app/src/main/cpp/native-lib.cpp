@@ -3,6 +3,7 @@
 #include "android/log.h"
 #include <android/native_window_jni.h>
 #include <unistd.h>
+#include "stdio.h"
 #ifdef __cplusplus
 extern "C" {
 #endif
@@ -235,6 +236,11 @@ Java_com_houde_ffmpeg_test_MyVideoView_play(JNIEnv *env, jobject instance,
             LOGD("初始化 解码器上下文失败。");
             return;
         }
+        //输出视频信息
+        FFLOGI("视频的文件格式：%s",formatContext->iformat->name);
+        FFLOGI("视频时长：%d", (formatContext->duration)/1000000);
+        FFLOGI("视频的宽高：%d,%d",codecContext->width,codecContext->height);
+        FFLOGI("解码器的名称：%s",videoDecoder->name);
         AVPixelFormat dstFormat = AV_PIX_FMT_RGBA;
         //分配存储压缩数据的结构体对象AVPacket
         //如果是视频流，AVPacket会包含一帧的压缩数据。
