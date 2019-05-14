@@ -73,6 +73,7 @@ add_library( # Sets the name of the library.
         src/main/cpp/native-lib.cpp
         src/main/cpp/FFmpegPlayer.cpp
         src/main/cpp/IFFmpegPlayer.cpp
+        src/main/cpp/FFmpegMusic.cpp
         )
 
 # Searches for a specified prebuilt library and stores the path as a
@@ -112,4 +113,5 @@ target_link_libraries( # Specifies the target library.
         # included in the NDK.
         ${log-lib}
         ${lnative_window_jni-lib}
+        OpenSLES
         )

@@ -11,9 +11,11 @@ import kotlinx.android.synthetic.main.activity_third.*
 open class ThirdActivity : AppCompatActivity() {
     private val inputFilePath = "/storage/emulated/0/GreenCheng/video/g4.mp4"
     private var audioTrack:AudioTrack? = null
+    private lateinit var musicPlayer: MusicPlayer
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_third)
+        musicPlayer = MusicPlayer(inputFilePath)
     }
 
     fun play(view: View) {
@@ -25,8 +27,11 @@ open class ThirdActivity : AppCompatActivity() {
 //            Log.d("ThirdActivity", "------>>调用native方法")
 //            playAudio(inputFilePath)
 //        }).start()
-        val player = MusicPlayer(inputFilePath)
-        player.playAudio()
+        musicPlayer.playAudio()
+    }
+
+    fun stopAudio(view: View){
+        musicPlayer.stopAudio()
     }
 
     open fun createTrack(sampleRateInHn:Int,nbChannel:Int){

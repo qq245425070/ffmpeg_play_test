@@ -17,7 +17,7 @@ class MusicPlayer(path: String) {
     }
     private lateinit var audioTrack:AudioTrack
     private var audioPath:String = path
-    open fun createTrack(sampleRateInHn:Int,nbChannel:Int){
+    fun createTrack(sampleRateInHn:Int,nbChannel:Int){
         val channelConfig =when (nbChannel) {
             1 ->  AudioFormat.CHANNEL_OUT_MONO
             2 -> AudioFormat.CHANNEL_OUT_STEREO
@@ -31,16 +31,23 @@ class MusicPlayer(path: String) {
         audioTrack.play()
     }
 
-    open fun playTrack(buffer:ByteArray,length:Int){
+    fun playTrack(buffer:ByteArray,length:Int){
         if(audioTrack.playState == AudioTrack.PLAYSTATE_PLAYING){
             audioTrack.write(buffer,0,length)
         }
     }
 
     fun playAudio(){
-       Thread(Runnable { playAudio(audioPath) }).start()
+       Thread(Runnable { play(audioPath) }).start()
     }
 
+    fun stopAudio(){
+        stop()
+    }
     private external fun playAudio(path:String)
+
+    private external fun play(path:String)
+
+    private external fun stop()
 
 }
