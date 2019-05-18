@@ -86,7 +86,7 @@ Java_com_houde_ffmpeg_test_SecondActivity_decoder(JNIEnv * env,jobject obj,jstri
     }
     //输出视频信息
     FFLOGI("视频的文件格式：%s",pInputContext->iformat->name);
-    FFLOGI("视频时长：%d", (pInputContext->duration)/1000000);
+    FFLOGI("视频时长：%lf", (pInputContext->duration * av_q2d(pCodecCtx->time_base))/1000000);
     FFLOGI("视频的宽高：%d,%d",pCodecCtx->width,pCodecCtx->height);
     FFLOGI("解码器的名称：%s",pCodec->name);
 
@@ -241,7 +241,7 @@ Java_com_houde_ffmpeg_test_MyVideoView_play(JNIEnv *env, jobject instance,
         }
         //输出视频信息
         FFLOGI("视频的文件格式：%s",formatContext->iformat->name);
-        FFLOGI("视频时长：%d", (formatContext->duration)/1000000);
+        FFLOGI("视频时长：%lf", (formatContext->duration * av_q2d(formatContext->streams[video_stream_index]->time_base))/1000000);
         FFLOGI("视频的宽高：%d,%d",codecContext->width,codecContext->height);
         FFLOGI("解码器的名称：%s",videoDecoder->name);
         AVPixelFormat dstFormat = AV_PIX_FMT_RGBA;
@@ -568,7 +568,7 @@ Java_com_houde_ffmpeg_test_MusicPlayer_playAudio(JNIEnv * env, jobject instance,
                 int out_buf_size = av_samples_get_buffer_size(NULL,out_channel_nb,avf->nb_samples,out_sample_fmt,1);
                 jbyteArray audioArray = env->NewByteArray(out_buf_size);
                 env->SetByteArrayRegion(audioArray,0,out_buf_size,(const jbyte*)out_buf);
-                //调用Java方法
+                //调用Java方法 把解码后的数据（audioArray）给AudioTrack进行播放
                 env->CallVoidMethod(instance,methodID1,audioArray,out_buf_size);
                 env->DeleteLocalRef(audioArray);
             }
@@ -730,6 +730,7 @@ void releaseResource(){
 extern "C"
 JNIEXPORT void JNICALL
 Java_com_houde_ffmpeg_test_MusicPlayer_play(JNIEnv *env, jobject instance,jstring audioPath) {
+    //这是用OpenSL EL 进行播放
     createEngine();
     createMixVolume();
     const char* path = env->GetStringUTFChars(audioPath,0);

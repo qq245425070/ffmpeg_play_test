@@ -36,6 +36,7 @@ class MyVideoView @JvmOverloads constructor(context: Context, attrs: AttributeSe
         }).start()
     }
     private external fun play (path:String, surface: Surface)
+    private external fun play2 (path:String, surface: Surface)
     companion object {
         init {
             System.loadLibrary("native-lib")

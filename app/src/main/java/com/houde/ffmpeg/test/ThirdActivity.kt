@@ -34,7 +34,10 @@ open class ThirdActivity : AppCompatActivity() {
         musicPlayer.stopAudio()
     }
 
-    open fun createTrack(sampleRateInHn:Int,nbChannel:Int){
+    /**
+     * 这是初始化AudioTrack的方法，也是在C中调用的
+     */
+    fun createTrack(sampleRateInHn:Int,nbChannel:Int){
         val channelConfig =when (nbChannel) {
             1 ->  AudioFormat.CHANNEL_OUT_MONO
             2 -> AudioFormat.CHANNEL_OUT_STEREO
@@ -45,7 +48,10 @@ open class ThirdActivity : AppCompatActivity() {
         audioTrack?.play()
     }
 
-    open fun playTrack(buffer:ByteArray,length:Int){
+    /**
+     * 这是在C代码中调用的，就是在解码出PCM就会调用这个方法，让AudioTrack进行播放
+     */
+    fun playTrack(buffer:ByteArray,length:Int){
         if(audioTrack != null && audioTrack?.playState == AudioTrack.PLAYSTATE_PLAYING){
             audioTrack?.write(buffer,0,length)
         }
